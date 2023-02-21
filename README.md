@@ -3,6 +3,8 @@
 That fancy instagram reel animation for printing hello world, but written in
 rust
 
+![](gifs/main_showcase.gif)
+
 ## Installation
 
 To install this program... if you really want to... use the following command.
@@ -21,7 +23,8 @@ new time in milliseconds. You can also use the shorthand `-t` flag
 Using the `--string` flag you can also change the string to be fancy printed.
 You can also use the shorthand `-s` flag
 
-### Updating the same line
+#### Printing on the same line
 You can get the animation to print all on the same line using the `--one-line`
 flag. This will append a '\r' character to the end of the line instead of the
 '\n' character. You can also use the shorthand `-o` flag
+![](gifs/oneline_showcase.gif)
