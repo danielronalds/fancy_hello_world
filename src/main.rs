@@ -1,13 +1,21 @@
 use clap::Parser;
+use std::io::{stdout, Write};
 use std::{thread, time};
 
 /// That fancy instagram animation for hello world in rust
 #[derive(Parser)]
 struct Args {
+    #[arg(long, short)]
     // The phrase to print
     phrase: Option<String>,
+
+    #[arg(long, short)]
     /// The milliseconds taken inbetween char iterations
     sleep_time: Option<u64>,
+    
+    #[arg(long, short)]
+    /// Whether to print all on one line
+    one_line: bool,
 }
 
 fn main() {
@@ -27,7 +35,15 @@ fn main() {
 
             let current_letter = current_letter_as_num as char;
 
-            println!("{}{}", &phrase, &current_letter);
+            print!("{}{}", &phrase, &current_letter);
+
+            if args.one_line {
+                print!("{}",'\r');
+            } else {
+                print!("{}",'\n');
+            }
+
+            stdout().flush().unwrap();
 
             if current_letter != wanted_char {
                 current_letter_as_num = current_letter_as_num.saturating_add(1);
@@ -39,4 +55,6 @@ fn main() {
 
         phrase.push(current_letter_as_num as char);
     }
+
+    println!();
 }
