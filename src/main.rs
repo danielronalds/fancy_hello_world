@@ -2,19 +2,20 @@ use clap::Parser;
 use std::io::{stdout, Write};
 use std::{thread, time};
 
-/// That fancy instagram animation for hello world in rust
 #[derive(Parser)]
-struct Args {
+#[clap(author, version, about)]
+/// That fancy instagram animation for hello world in rust
+struct ProgramOptions {
     #[arg(long, short)]
-    // The string to print
+    /// The string to print, the default being "Hello, world!"
     string: Option<String>,
 
     #[arg(long, short)]
-    /// The milliseconds taken inbetween char iterations
+    /// The milliseconds taken inbetween char iterations, the default being 2ms
     time: Option<u64>,
-    
+
     #[arg(long, short)]
-    /// Whether to print all on one line
+    /// Whether new iterations should be printed on the same line
     one_line: bool,
 }
 
@@ -25,7 +26,7 @@ const DEFAULT_STR: &str = "Hello, world!";
 const DEFAULT_TIME: u64 = 2;
 
 fn main() {
-    let args = Args::parse();
+    let args = ProgramOptions::parse();
 
     let wanted_string = args.string.unwrap_or(DEFAULT_STR.to_string());
 
@@ -41,13 +42,10 @@ fn main() {
 
             let current_letter = current_letter_as_num as char;
 
-            print!("{}{}", &string, &current_letter);
-
-            if args.one_line {
-                print!("{}",'\r');
-            } else {
-                print!("{}",'\n');
-            }
+            match args.one_line {
+                true => print!("{}{}{}", &string, &current_letter, '\r'),
+                false => print!("{}{}{}", &string, &current_letter, '\n') 
+            } 
 
             stdout().flush().unwrap();
 
