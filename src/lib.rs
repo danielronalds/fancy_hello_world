@@ -62,3 +62,13 @@ pub fn print<T: ToString>(text: T, time_delay: Duration, one_line: bool) {
 
     println!();
 }
+
+mod tests {
+    #[test]
+    #[should_panic]
+    fn print_panics_with_non_ascii_char() {
+        let string = "ShȎuld panic";
+
+        super::default_print(string);
+    }
+}
