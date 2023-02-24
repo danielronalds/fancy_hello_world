@@ -32,35 +32,39 @@ pub fn print<T: ToString>(text: T, time_delay: Duration, one_line: bool) {
         panic!("String is not ascii!");
     }
 
-    let mut string = String::new();
+    let lines = wanted_string.split('\n');
 
-    for wanted_char in wanted_string.chars() {
-        let mut current_letter_as_num: u8 = STARTING_CHAR as u8;
+    for wanted_string in lines {
+        let mut string = String::new();
 
-        loop {
-            thread::sleep(time_delay);
+        for wanted_char in wanted_string.chars() {
+            let mut current_letter_as_num: u8 = STARTING_CHAR as u8;
 
-            let current_letter = current_letter_as_num as char;
+            loop {
+                thread::sleep(time_delay);
 
-            match one_line {
-                true => print!("{}{}{}", &string, &current_letter, '\r'),
-                false => print!("{}{}{}", &string, &current_letter, '\n'),
+                let current_letter = current_letter_as_num as char;
+
+                match one_line {
+                    true => print!("{}{}{}", &string, &current_letter, '\r'),
+                    false => print!("{}{}{}", &string, &current_letter, '\n'),
+                }
+
+                stdout().flush().unwrap();
+
+                if current_letter != wanted_char {
+                    current_letter_as_num = current_letter_as_num.saturating_add(1);
+                    continue;
+                }
+
+                break;
             }
 
-            stdout().flush().unwrap();
-
-            if current_letter != wanted_char {
-                current_letter_as_num = current_letter_as_num.saturating_add(1);
-                continue;
-            }
-
-            break;
+            string.push(current_letter_as_num as char);
         }
 
-        string.push(current_letter_as_num as char);
+        println!();
     }
-
-    println!();
 }
 
 mod tests {
