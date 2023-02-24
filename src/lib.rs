@@ -3,7 +3,35 @@ use std::{thread, time::Duration};
 
 const STARTING_CHAR: char = ' ';
 
-pub fn print(wanted_string: String, time_delay: Duration, one_line: bool) {
+const DEFAULT_TIME_DELAY: u64 = 2;
+
+/// Fancy prints the given string with a time delay of 2ms and on the same line
+///
+/// Parameters:
+/// text   The text to fancy print, must implement ToString
+///
+/// Panics if the string is not ascii
+pub fn default_print<T: ToString>(text: T) {
+    let default_time = Duration::from_millis(DEFAULT_TIME_DELAY);
+
+    print(text, default_time, true);
+}
+
+/// Fancy prints the given string with a time delay of 2ms and on the same line
+///
+/// Parameters:
+/// text         The text to fancy print, must implement ToString
+/// time_delay   The time taken between iterations
+/// one_line     Whether iterations should be printed on the same line or not
+///
+/// Panics if the string is not ascii
+pub fn print<T: ToString>(text: T, time_delay: Duration, one_line: bool) {
+    let wanted_string = text.to_string();
+
+    if !wanted_string.is_ascii() {
+        panic!("String is not ascii!");
+    }
+
     let mut string = String::new();
 
     for wanted_char in wanted_string.chars() {
