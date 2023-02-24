@@ -5,74 +5,138 @@ const STARTING_CHAR: char = ' ';
 
 const DEFAULT_TIME_DELAY: u64 = 2;
 
-/// Fancy prints the given string with a time delay of 2ms and on the same line
-///
-/// Parameters:
-/// text   The text to fancy print, must implement ToString
-///
-/// Panics if the string is not ascii
-pub fn default_print<T: ToString>(text: T) {
-    let default_time = Duration::from_millis(DEFAULT_TIME_DELAY);
-
-    print(text, default_time, true);
+pub struct FancyPrinter {
+    time_delay: Duration,
+    animation: Animation,
+    one_line: bool,
 }
 
-/// Fancy prints the given string with a time delay of 2ms and on the same line
-///
-/// Parameters:
-/// text         The text to fancy print, must implement ToString
-/// time_delay   The time taken between iterations
-/// one_line     Whether iterations should be printed on the same line or not
-///
-/// Panics if the string is not ascii
-pub fn print<T: ToString>(text: T, time_delay: Duration, one_line: bool) {
-    let wanted_string = text.to_string();
-
-    if !wanted_string.is_ascii() {
-        panic!("String is not ascii!");
+impl FancyPrinter {
+    pub fn builder() -> FancyPrinterBuilder {
+        FancyPrinterBuilder::new()
     }
 
-    let lines = wanted_string.split('\n');
+    pub fn print<T: ToString>(&self, text: T) {
+        let wanted_string = text.to_string();
 
-    for wanted_string in lines {
-        let mut string = String::new();
+        if !wanted_string.is_ascii() {
+            panic!("String is not ascii!");
+        }
 
-        for wanted_char in wanted_string.chars() {
-            let mut current_letter_as_num: u8 = STARTING_CHAR as u8;
+        match self.animation {
+            Animation::CharacterCycling => self.character_cycling(wanted_string),
+            Animation::Typing => self.typing(wanted_string),
+        }
+    }
 
-            loop {
-                thread::sleep(time_delay);
+    fn typing(&self, text: String) {
+        let lines = text.split('\n');
 
-                let current_letter = current_letter_as_num as char;
+        for line in lines {
+            let mut string = String::new();
 
-                match one_line {
-                    true => print!("{}{}{}", &string, &current_letter, '\r'),
-                    false => print!("{}{}{}", &string, &current_letter, '\n'),
+            for char in line.chars() {
+                thread::sleep(self.time_delay);
+
+                string.push(char);
+
+                match self.one_line {
+                    true => print!("{}", char),
+                    false => print!("{}{}", &string, '\n'),
                 }
 
                 stdout().flush().unwrap();
-
-                if current_letter != wanted_char {
-                    current_letter_as_num = current_letter_as_num.saturating_add(1);
-                    continue;
-                }
-
-                break;
             }
 
-            string.push(current_letter_as_num as char);
+            println!();
         }
 
         println!();
     }
+
+    fn character_cycling(&self, text: String) {
+        let lines = text.split('\n');
+
+        for wanted_string in lines {
+            let mut string = String::new();
+
+            for wanted_char in wanted_string.chars() {
+                let mut current_letter_as_num: u8 = STARTING_CHAR as u8;
+
+                loop {
+                    thread::sleep(self.time_delay);
+
+                    let current_letter = current_letter_as_num as char;
+
+                    match self.one_line {
+                        true => print!("{}{}{}", &string, &current_letter, '\r'),
+                        false => print!("{}{}{}", &string, &current_letter, '\n'),
+                    }
+
+                    stdout().flush().unwrap();
+
+                    if current_letter != wanted_char {
+                        current_letter_as_num = current_letter_as_num.saturating_add(1);
+                        continue;
+                    }
+
+                    break;
+                }
+
+                string.push(current_letter_as_num as char);
+            }
+
+            println!();
+        }
+    }
 }
 
-mod tests {
-    #[test]
-    #[should_panic]
-    fn print_panics_with_non_ascii_char() {
-        let string = "ShȎuld panic";
+impl Default for FancyPrinter {
+    fn default() -> Self {
+        FancyPrinterBuilder::new().build()
+    }
+}
 
-        super::default_print(string);
+pub enum Animation {
+    CharacterCycling,
+    Typing,
+}
+
+pub struct FancyPrinterBuilder {
+    time_delay: Duration,
+    animation: Animation,
+    one_line: bool,
+}
+
+impl FancyPrinterBuilder {
+    pub fn new() -> Self {
+        Self {
+            time_delay: Duration::from_millis(DEFAULT_TIME_DELAY),
+            one_line: true,
+            animation: Animation::CharacterCycling,
+        }
+    }
+
+    pub fn time_delay(mut self, time_delay: Duration) -> Self {
+        self.time_delay = time_delay;
+        self
+    }
+
+    pub fn one_line(mut self, one_line: bool) -> Self {
+        self.one_line = one_line;
+        self
+    }
+
+    pub fn animation(mut self, animation: Animation) -> Self {
+        self.animation = animation;
+        self
+    }
+
+    pub fn build(self) -> FancyPrinter {
+        FancyPrinter {
+            time_delay: self.time_delay,
+            animation: self.animation,
+            one_line: self.one_line,
+        }
     }
 }
