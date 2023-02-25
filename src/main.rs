@@ -1,7 +1,7 @@
 use clap::Parser;
 use std::time;
 
-use fancy_hello_world::FancyPrinter;
+use fancy_hello_world::{ FancyPrinter, Animation };
 
 #[derive(Parser)]
 #[clap(author, version, about)]
@@ -16,11 +16,17 @@ struct ProgramOptions {
     time: Option<u64>,
 
     #[arg(long, short)]
+    /// The type of animation to use, the default being character-cycling
+    animation: Option<Animation>,
+
+    #[arg(long, short)]
     /// Whether new iterations should be printed on the same line
     one_line: bool,
 }
 
 const DEFAULT_STR: &str = "Hello, world!";
+
+const DEFAULT_ANIMATION: Animation = Animation::CharacterCycling;
 
 const DEFAULT_TIME: u64 = 2;
 
@@ -29,10 +35,13 @@ fn main() {
 
     let string = args.string.unwrap_or(DEFAULT_STR.to_string());
 
-    let time_to_sleep = time::Duration::from_millis(args.time.unwrap_or(DEFAULT_TIME));
+    let time = time::Duration::from_millis(args.time.unwrap_or(DEFAULT_TIME));
+
+    let animation = args.animation.unwrap_or(DEFAULT_ANIMATION);
 
     let printer = FancyPrinter::builder()
-        .time_delay(time_to_sleep)
+        .time_delay(time)
+        .animation(animation)
         .one_line(args.one_line)
         .build();
 
