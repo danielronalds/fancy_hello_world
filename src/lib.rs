@@ -8,7 +8,7 @@ const DEFAULT_TIME_DELAY: u64 = 2;
 pub struct FancyPrinter {
     time_delay: Duration,
     animation: Animation,
-    one_line: bool,
+    multi_line: bool,
 }
 
 impl FancyPrinter {
@@ -40,9 +40,9 @@ impl FancyPrinter {
 
                 string.push(char);
 
-                match self.one_line {
-                    true => print!("{}", char),
-                    false => print!("{}{}", &string, '\n'),
+                match self.multi_line {
+                    true => print!("{}{}", &string, '\n'),
+                    false => print!("{}", char),
                 }
 
                 stdout().flush().unwrap();
@@ -68,9 +68,9 @@ impl FancyPrinter {
 
                     let current_letter = current_letter_as_num as char;
 
-                    match self.one_line {
-                        true => print!("{}{}{}", &string, &current_letter, '\r'),
-                        false => print!("{}{}{}", &string, &current_letter, '\n'),
+                    match self.multi_line {
+                        true => print!("{}{}{}", &string, &current_letter, '\n'),
+                        false => print!("{}{}{}", &string, &current_letter, '\r'),
                     }
 
                     stdout().flush().unwrap();
@@ -106,14 +106,14 @@ pub enum Animation {
 pub struct FancyPrinterBuilder {
     time_delay: Duration,
     animation: Animation,
-    one_line: bool,
+    multi_line: bool,
 }
 
 impl FancyPrinterBuilder {
     pub fn new() -> Self {
         Self {
             time_delay: Duration::from_millis(DEFAULT_TIME_DELAY),
-            one_line: true,
+            multi_line: false,
             animation: Animation::CharacterCycling,
         }
     }
@@ -123,8 +123,8 @@ impl FancyPrinterBuilder {
         self
     }
 
-    pub fn one_line(mut self, one_line: bool) -> Self {
-        self.one_line = one_line;
+    pub fn multi_line(mut self, one_line: bool) -> Self {
+        self.multi_line = one_line;
         self
     }
 
@@ -137,7 +137,7 @@ impl FancyPrinterBuilder {
         FancyPrinter {
             time_delay: self.time_delay,
             animation: self.animation,
-            one_line: self.one_line,
+            multi_line: self.multi_line,
         }
     }
 }

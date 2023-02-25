@@ -20,8 +20,8 @@ struct ProgramOptions {
     animation: Option<Animation>,
 
     #[arg(long, short)]
-    /// Whether new iterations should be printed on the same line
-    one_line: bool,
+    /// Whether new iterations should be printed on the different lines
+    multi_line: bool,
 }
 
 const DEFAULT_STR: &str = "Hello, world!";
@@ -42,7 +42,7 @@ fn main() {
     let printer = FancyPrinter::builder()
         .time_delay(time)
         .animation(animation)
-        .one_line(args.one_line)
+        .multi_line(args.multi_line)
         .build();
 
     printer.print(string);
