@@ -1,7 +1,7 @@
 use clap::Parser;
 use std::time;
 
-use fancy_hello_world;
+use fancy_hello_world::FancyPrinter;
 
 #[derive(Parser)]
 #[clap(author, version, about)]
@@ -20,7 +20,6 @@ struct ProgramOptions {
     one_line: bool,
 }
 
-
 const DEFAULT_STR: &str = "Hello, world!";
 
 const DEFAULT_TIME: u64 = 2;
@@ -28,9 +27,14 @@ const DEFAULT_TIME: u64 = 2;
 fn main() {
     let args = ProgramOptions::parse();
 
-    let wanted_string = args.string.unwrap_or(DEFAULT_STR.to_string());
+    let string = args.string.unwrap_or(DEFAULT_STR.to_string());
 
     let time_to_sleep = time::Duration::from_millis(args.time.unwrap_or(DEFAULT_TIME));
 
-    fancy_hello_world::print(wanted_string, time_to_sleep, args.one_line);
+    let printer = FancyPrinter::builder()
+        .time_delay(time_to_sleep)
+        .one_line(args.one_line)
+        .build();
+
+    printer.print(string);
 }
