@@ -73,7 +73,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "fancy_hello_world"
+name = "fancy_print"
 version = "0.1.0"
 dependencies = [
  "clap",

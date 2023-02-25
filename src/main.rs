@@ -1,7 +1,7 @@
 use clap::Parser;
 use std::time;
 
-use fancy_hello_world::{ FancyPrinter, Animation };
+use fancy_print::{ FancyPrinter, Animation };
 
 #[derive(Parser)]
 #[clap(author, version, about)]
