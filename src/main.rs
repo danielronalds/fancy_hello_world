@@ -1,7 +1,7 @@
 use clap::Parser;
 use std::time;
 
-use fancy_print::{ FancyPrinter, Animation };
+use fancy_print::{Animation, FancyPrinter};
 
 #[derive(Parser)]
 #[clap(author, version, about)]
@@ -33,7 +33,7 @@ const DEFAULT_TIME: u64 = 2;
 fn main() {
     let args = ProgramOptions::parse();
 
-    let string = args.string.unwrap_or(DEFAULT_STR.to_string());
+    let string = args.string.unwrap_or_else(|| DEFAULT_STR.to_string());
 
     let time = time::Duration::from_millis(args.time.unwrap_or(DEFAULT_TIME));
 

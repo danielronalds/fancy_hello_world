@@ -41,7 +41,7 @@ impl FancyPrinter {
                 string.push(char);
 
                 match self.multi_line {
-                    true => print!("{}{}", &string, '\n'),
+                    true => println!("{}", &string),
                     false => print!("{}", char),
                 }
 
@@ -69,8 +69,8 @@ impl FancyPrinter {
                     let current_letter = current_letter_as_num as char;
 
                     match self.multi_line {
-                        true => print!("{}{}{}", &string, &current_letter, '\n'),
-                        false => print!("{}{}{}", &string, &current_letter, '\r'),
+                        true => println!("{}{}", &string, &current_letter),
+                        false => print!("{}{}\r", &string, &current_letter),
                     }
 
                     stdout().flush().unwrap();
@@ -139,5 +139,11 @@ impl FancyPrinterBuilder {
             animation: self.animation,
             multi_line: self.multi_line,
         }
+    }
+}
+
+impl Default for FancyPrinterBuilder {
+    fn default() -> Self {
+        Self::new()
     }
 }
