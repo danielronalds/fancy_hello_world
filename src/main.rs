@@ -22,6 +22,10 @@ struct ProgramOptions {
     #[arg(long, short)]
     /// Whether new iterations should be printed on the different lines
     multi_line: bool,
+
+    #[arg(long, short)]
+    /// Whether to ignore new line characters or not
+    ignore_newlines: bool,
 }
 
 #[derive(Clone, clap::ValueEnum)]
@@ -59,6 +63,7 @@ fn main() {
         .time_delay(time)
         .animation(animation)
         .multi_line(args.multi_line)
+        .ignore_newlines(args.ignore_newlines)
         .build();
 
     printer.print(string);

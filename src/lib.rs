@@ -9,6 +9,7 @@ pub struct FancyPrinter {
     time_delay: Duration,
     animation: Animation,
     multi_line: bool,
+    ignore_newlines: bool,
 }
 
 impl FancyPrinter {
@@ -48,10 +49,10 @@ impl FancyPrinter {
                 stdout().flush().unwrap();
             }
 
-            println!();
+            if !self.ignore_newlines {
+                println!();
+            }
         }
-
-        println!();
     }
 
     fn character_cycling(&self, text: String) {
@@ -70,7 +71,7 @@ impl FancyPrinter {
 
                     match self.multi_line {
                         true => println!("{}{}", &string, &current_letter),
-                        false => print!("{}{}\r", &string, &current_letter),
+                        false => print!("\r{}{}", &string, &current_letter),
                     }
 
                     stdout().flush().unwrap();
@@ -86,7 +87,9 @@ impl FancyPrinter {
                 string.push(current_letter_as_num as char);
             }
 
-            println!();
+            if !self.ignore_newlines {
+                println!();
+            }
         }
     }
 }
@@ -106,6 +109,7 @@ pub struct FancyPrinterBuilder {
     time_delay: Duration,
     animation: Animation,
     multi_line: bool,
+    ignore_newlines: bool,
 }
 
 impl FancyPrinterBuilder {
@@ -114,6 +118,7 @@ impl FancyPrinterBuilder {
             time_delay: Duration::from_millis(DEFAULT_TIME_DELAY),
             multi_line: false,
             animation: Animation::CharacterCycling,
+            ignore_newlines: false,
         }
     }
 
@@ -132,11 +137,17 @@ impl FancyPrinterBuilder {
         self
     }
 
+    pub fn ignore_newlines(mut self, ignore_newlines: bool) -> Self {
+        self.ignore_newlines = ignore_newlines;
+        self
+    }
+
     pub fn build(self) -> FancyPrinter {
         FancyPrinter {
             time_delay: self.time_delay,
             animation: self.animation,
             multi_line: self.multi_line,
+            ignore_newlines: self.ignore_newlines,
         }
     }
 }
