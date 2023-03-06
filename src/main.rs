@@ -17,16 +17,32 @@ struct ProgramOptions {
 
     #[arg(long, short)]
     /// The type of animation to use, the default being character-cycling
-    animation: Option<Animation>,
+    animation: Option<AnimationOptions>,
 
     #[arg(long, short)]
     /// Whether new iterations should be printed on the different lines
     multi_line: bool,
 }
 
+#[derive(Clone, clap::ValueEnum)]
+/// Intermediate enum so that no clap code is in the lib package
+enum AnimationOptions {
+    CharacterCycling,
+    Typing,
+}
+
+impl AnimationOptions {
+    pub fn to_animation(&self) -> Animation {
+        match self {
+            AnimationOptions::CharacterCycling => Animation::CharacterCycling,
+            AnimationOptions::Typing => Animation::Typing,
+        }
+    } 
+}
+
 const DEFAULT_STR: &str = "Hello, world!";
 
-const DEFAULT_ANIMATION: Animation = Animation::CharacterCycling;
+const DEFAULT_ANIMATION: AnimationOptions = AnimationOptions::CharacterCycling;
 
 const DEFAULT_TIME: u64 = 2;
 
@@ -37,7 +53,7 @@ fn main() {
 
     let time = time::Duration::from_millis(args.time.unwrap_or(DEFAULT_TIME));
 
-    let animation = args.animation.unwrap_or(DEFAULT_ANIMATION);
+    let animation = args.animation.unwrap_or(DEFAULT_ANIMATION).to_animation();
 
     let printer = FancyPrinter::builder()
         .time_delay(time)

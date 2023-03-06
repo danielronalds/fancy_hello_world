@@ -97,7 +97,6 @@ impl Default for FancyPrinter {
     }
 }
 
-#[derive(Clone, clap::ValueEnum)]
 pub enum Animation {
     CharacterCycling,
     Typing,
