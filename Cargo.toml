@@ -2,6 +2,11 @@
 name = "fancy_print"
 version = "0.1.0"
 edition = "2021"
+description = "Easily print animated ASCII text to the terminal!"
+license = "MIT"
+exclude = [
+    "gifs/*",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
